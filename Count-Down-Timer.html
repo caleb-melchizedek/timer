@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+   <head>
+          <link href="bootstrap.min.css" rel="stylesheet" media="screen">
+	 <script type="text/javascript"  src="bootstrap.min.js">     </script>
+	 <script type="text/javascript"  src="jquery-1.12.3.min.js">     </script>
+   
+      
+   </head>
+   <body name="body">
+        <center>
+
+          <div id="show-Time">
+            <h1 id="crntime"></h1>  
+          </div>
+
+          <div id="Count-Down">
+
+            <div id="set-alarm">
+              <div id="setTimeNotify" class="show"> <h4>Time isn't set. Click blue button to set time</h4></div>
+              <button id="toggle-set" onclick="toggleSet()"><img src="set-time.png"> </button>
+                <div id="set" class="hidden">
+                 <input class="" type="time"  id="almtime">
+                 <button  class="btn btn-info" id="set-time" onclick="settimer()"><strong> Set Alarm </strong></button>
+                </div>
+            </div>
+
+            <div id="countdownDiv">
+              <h1 id="countdown-time"></h1>
+            </div>       
+          </div>
+        </center>
+
+
+        
+   </body>
+
+   <style type="text/css">
+     #show-Time{
+        height: 50vh;
+        width:100%;
+        background-color:#0681ff;
+     }
+     #show-Time h1{
+      margin-bottom:5px;
+      margin-top: 5px;
+      font-size:190pt;
+      font-family:arial;
+      color:white;
+     }
+
+     #Count-Down{
+      width:100%;
+      height: 50vh;
+      display: block;
+     }
+
+     #set-alarm{
+      display: flex;
+      position:absolute;
+      right:50px;
+      align-items: center;
+      margin-top:10px;
+      margin-bottom:10px;
+     }
+     #set{
+      width: inherit;
+     }
+
+     #toggle-set{
+      background:none;
+      border: none;
+     }
+
+     #toggle-set img{ 
+      width:50px;
+      height: auto;
+      cursor: pointer;
+      }
+      #setTimeNotify h4{
+        font-family:arial;
+      }
+
+    #countdown-time{
+      margin-bottom:5px;
+      margin-top: 5px;
+      font-size:190pt;
+      font-family:arial;
+    }
+
+    #countdownDiv{
+      padding-top:30px;
+    }
+    
+    .show{
+      display:inline;
+      visibility:visible;
+    }
+
+    .hidden{
+      visibility:hidden;
+      display:none;
+    }
+
+   </style>
+
+   <script type="text/javascript">
+      setInterval(showtime,500);
+      setInterval(settimer,500);
+      setInterval (toggleNotify,500);
+
+      var crntime = document.getElementById('crntime');
+      var set = document.getElementById('set');
+      var setTimeNotify = document.getElementById('setTimeNotify')
+      var countDown = document.getElementById('countdown-time');
+      var almtime = document.getElementById('almtime');
+
+
+       function showtime( ){
+        var date = new Date();
+        var hr = date.getHours();
+        var min = date.getMinutes();
+        var sec = date.getSeconds();
+
+        var time = hr +":" + min +":" + sec;
+          crntime.innerHTML= time; 
+         // console.log(date);
+          return  date;
+        }
+        
+
+        function toggleSet(){
+          console.log(set.classList.toString());
+          set.classList.toggle('hidden');
+          console.log(set.classList.toString());
+        }
+
+        function toggleNotify(){
+          console.log("check notify")
+          if(almtime.value==""){
+            setTimeNotify.classList.remove('hidden');
+            setTimeNotify.classList.add('show');
+          }
+          else{
+            setTimeNotify.classList.remove('show');
+            setTimeNotify.classList.add('hidden');
+          }
+        }
+
+        function settimer(){
+          var nowHr = showtime().getHours();
+          var nowMin = showtime().getMinutes();
+          var nowSec = showtime().getSeconds();
+          var setTime = almtime.value;
+
+          var setHr = Number(setTime.substr(0,2));
+          var setMin = Number(setTime.substr(3,2));
+        
+          var remHr = setHr - nowHr;
+          var remMin = setMin - nowMin;
+          var remSec = 60-nowSec;
+
+//when  no time is set
+
+          if (setTime==""){
+            countDown.innerHTML= "00"+":" +"00"+":" +"00";
+          }
+
+// when the set timead current time are the same
+
+          else if(remHr > 0 && remMin > 0 && remSec > 0){
+              countDown.innerHTML= remHr+":" +remMin+":" +remSec;
+          }
+
+          else if(remHr > 0 && remMin < 0 ){
+                      remHr-=1;
+                      remMin+=60;
+                  if(remHr < 10) {
+                    if(remMin < 10)countDown.innerHTML= "0"+remHr+":" +"0"+remMin+":" +remSec;
+
+                    else countDown.innerHTML= "0"+remHr+":" +remMin+":" +remSec;
+                  }
+          }
+
+          else if(remHr == 0 && remMin == 0 ) countDown.innerHTML= "00"+":" +"00"+":" +remSec;
+        
+
+// when the set hour and current hour are the same but the set minute is greater than the current minute
+
+          else if(remHr == 0 && remMin > 0 ){
+                  if (remMin > 10 ) countDown.innerHTML= "00"+":" +"0"+remMin+":" +remSec;
+
+                  else countDown.innerHTML= "00"+":" +remMin+":" +remSec;
+                console.log();
+              }
+
+          else if(remHr == 0 &&remMin<0){
+                  remSec = nowSec;
+                  if((remMin*-1) < 10)  countDown.innerHTML= "-00"+":" +"0"+remMin*-1+":" +remSec;
+
+                  else countDown.innerHTML= "-00"+":" +remMin*-1+":" +remSec;
+
+              }
+
+          else if(remHr < 0 && remMin < 0){
+                remSec= nowSec;
+               
+                  if((remHr*-1) < 10 ){ 
+                      if(remMin*-1< 10) countDown.innerHTML= "-0"+(remHr*-1)+":"+"0"+(remMin*-1)+":" +remSec;
+
+                      else countDown.innerHTML= "-0"+(remHr*-1)+":"+(remMin*-1)+":" +remSec;
+                      }
+
+                  else if((remMin*-1) < 10) countDown.innerHTML= remHr+":"+"0"+(remMin*-1)+":" +remSec;
+
+                  else countDown.innerHTML= remHr+":" +(remMin*-1)+":" +remSec;
+
+            //    console.log();
+              }
+          else if(remHr < 0 && remMin == 0) {
+                  remSec= nowSec;
+
+                  if((remHr*-1) < 10)countDown.innerHTML="-0"+(remHr*-1)+":"+"00"+":" +remSec;
+
+                  else countDown.innerHTML=(remHr*-1)+":"+"00"+":" +remSec;
+              }
+             else countDown.innerHTML= remHr+":" +remMin+":" +remSec;
+
+          }
+
+      </script> 
+</html>
